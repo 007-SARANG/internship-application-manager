@@ -4,6 +4,8 @@ A clean, fast web app to track your internship applications from wishlist to
 offer. Built with Next.js (App Router), TypeScript, and Tailwind CSS. Data is
 stored locally in your browser — no backend or sign-up required.
 
+**🌐 Live:** https://internship-application-manager.vercel.app
+
 ## Features
 
 - **Add, edit, and delete** applications with company, role, location, status,
