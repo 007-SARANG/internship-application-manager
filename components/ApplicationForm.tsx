@@ -23,6 +23,7 @@ function emptyForm(): Omit<Application, "id" | "createdAt"> {
 
 export default function ApplicationForm({ initial, onSave, onClose }: Props) {
   const [form, setForm] = useState(emptyForm());
+  const [error, setError] = useState("");
 
   useEffect(() => {
     if (initial) {
@@ -31,7 +32,17 @@ export default function ApplicationForm({ initial, onSave, onClose }: Props) {
     } else {
       setForm(emptyForm());
     }
+    setError("");
   }, [initial]);
+
+  // Close on Escape.
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") onClose();
+    };
+    document.addEventListener("keydown", onKey);
+    return () => document.removeEventListener("keydown", onKey);
+  }, [onClose]);
 
   function update<K extends keyof ReturnType<typeof emptyForm>>(
     key: K,
@@ -43,6 +54,11 @@ export default function ApplicationForm({ initial, onSave, onClose }: Props) {
   function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     if (!form.company.trim() && !form.role.trim()) {
+      setError("Enter at least a company or a role.");
+      return;
+    }
+    if (form.link && !/^https?:\/\//i.test(form.link.trim())) {
+      setError("Link must start with http:// or https://");
       return;
     }
     onSave({
@@ -52,27 +68,39 @@ export default function ApplicationForm({ initial, onSave, onClose }: Props) {
     });
   }
 
+  const label =
+    "mb-1.5 block text-sm font-medium text-slate-700 dark:text-slate-300";
   const inputClass =
-    "w-full rounded-lg border border-slate-300 px-3 py-2 text-sm text-slate-900 outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-100";
+    "w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-100 dark:border-slate-700 dark:bg-slate-800 dark:text-white dark:focus:ring-blue-500/20 dark:[color-scheme:dark]";
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/40 p-4"
+      className="animate-overlay-in fixed inset-0 z-50 flex items-center justify-center bg-slate-900/50 p-4 backdrop-blur-sm"
       onClick={onClose}
+      role="dialog"
+      aria-modal="true"
     >
       <div
-        className="max-h-[90vh] w-full max-w-lg overflow-y-auto rounded-2xl bg-white p-6 shadow-xl"
+        className="animate-panel-in thin-scroll max-h-[90vh] w-full max-w-lg overflow-y-auto rounded-2xl border border-slate-200 bg-white p-6 shadow-2xl dark:border-slate-800 dark:bg-slate-900"
         onClick={(e) => e.stopPropagation()}
       >
-        <h2 className="text-xl font-bold text-slate-900">
-          {initial ? "Edit application" : "Add application"}
-        </h2>
+        <div className="flex items-center justify-between">
+          <h2 className="text-xl font-bold text-slate-900 dark:text-white">
+            {initial ? "Edit application" : "Add application"}
+          </h2>
+          <button
+            onClick={onClose}
+            aria-label="Close"
+            className="flex h-8 w-8 items-center justify-center rounded-lg text-slate-400 transition hover:bg-slate-100 hover:text-slate-600 dark:hover:bg-slate-800 dark:hover:text-slate-300"
+          >
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M18 6 6 18M6 6l12 12"/></svg>
+          </button>
+        </div>
+
         <form onSubmit={handleSubmit} className="mt-5 space-y-4">
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
             <div>
-              <label className="mb-1 block text-sm font-medium text-slate-700">
-                Company
-              </label>
+              <label className={label}>Company</label>
               <input
                 className={inputClass}
                 value={form.company}
@@ -82,9 +110,7 @@ export default function ApplicationForm({ initial, onSave, onClose }: Props) {
               />
             </div>
             <div>
-              <label className="mb-1 block text-sm font-medium text-slate-700">
-                Role
-              </label>
+              <label className={label}>Role</label>
               <input
                 className={inputClass}
                 value={form.role}
@@ -96,9 +122,7 @@ export default function ApplicationForm({ initial, onSave, onClose }: Props) {
 
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
             <div>
-              <label className="mb-1 block text-sm font-medium text-slate-700">
-                Location
-              </label>
+              <label className={label}>Location</label>
               <input
                 className={inputClass}
                 value={form.location}
@@ -107,9 +131,7 @@ export default function ApplicationForm({ initial, onSave, onClose }: Props) {
               />
             </div>
             <div>
-              <label className="mb-1 block text-sm font-medium text-slate-700">
-                Status
-              </label>
+              <label className={label}>Status</label>
               <select
                 className={inputClass}
                 value={form.status}
@@ -128,9 +150,7 @@ export default function ApplicationForm({ initial, onSave, onClose }: Props) {
 
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
             <div>
-              <label className="mb-1 block text-sm font-medium text-slate-700">
-                Date applied
-              </label>
+              <label className={label}>Date applied</label>
               <input
                 type="date"
                 className={inputClass}
@@ -139,9 +159,7 @@ export default function ApplicationForm({ initial, onSave, onClose }: Props) {
               />
             </div>
             <div>
-              <label className="mb-1 block text-sm font-medium text-slate-700">
-                Link
-              </label>
+              <label className={label}>Link</label>
               <input
                 type="url"
                 className={inputClass}
@@ -153,9 +171,7 @@ export default function ApplicationForm({ initial, onSave, onClose }: Props) {
           </div>
 
           <div>
-            <label className="mb-1 block text-sm font-medium text-slate-700">
-              Notes
-            </label>
+            <label className={label}>Notes</label>
             <textarea
               className={`${inputClass} min-h-[80px] resize-y`}
               value={form.notes}
@@ -164,17 +180,23 @@ export default function ApplicationForm({ initial, onSave, onClose }: Props) {
             />
           </div>
 
+          {error && (
+            <p className="rounded-lg bg-rose-50 px-3 py-2 text-sm text-rose-600 dark:bg-rose-500/10 dark:text-rose-400">
+              {error}
+            </p>
+          )}
+
           <div className="flex justify-end gap-2 pt-2">
             <button
               type="button"
               onClick={onClose}
-              className="rounded-lg px-4 py-2 text-sm font-medium text-slate-600 hover:bg-slate-100"
+              className="rounded-lg px-4 py-2 text-sm font-medium text-slate-600 transition hover:bg-slate-100 dark:text-slate-400 dark:hover:bg-slate-800"
             >
               Cancel
             </button>
             <button
               type="submit"
-              className="rounded-lg bg-blue-600 px-4 py-2 text-sm font-semibold text-white hover:bg-blue-700"
+              className="rounded-lg bg-gradient-to-br from-indigo-500 to-blue-600 px-4 py-2 text-sm font-semibold text-white shadow-sm transition hover:from-indigo-600 hover:to-blue-700"
             >
               {initial ? "Save changes" : "Add application"}
             </button>

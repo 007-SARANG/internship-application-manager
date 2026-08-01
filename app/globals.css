@@ -6,6 +6,81 @@
   color-scheme: light;
 }
 
+.dark {
+  color-scheme: dark;
+}
+
 body {
-  @apply bg-slate-50 text-slate-900 antialiased;
+  @apply bg-slate-50 text-slate-900 antialiased transition-colors duration-300;
+}
+
+.dark body {
+  @apply bg-slate-950 text-slate-100;
+  background-image:
+    radial-gradient(45rem 45rem at 100% 0%, rgba(99, 102, 241, 0.12), transparent),
+    radial-gradient(40rem 40rem at 0% 100%, rgba(16, 185, 129, 0.08), transparent);
+  background-attachment: fixed;
+}
+
+body {
+  background-image:
+    radial-gradient(55rem 55rem at 100% -5%, rgba(99, 102, 241, 0.07), transparent),
+    radial-gradient(45rem 45rem at -5% 5%, rgba(16, 185, 129, 0.06), transparent);
+  background-attachment: fixed;
+}
+
+/* Card entrance */
+@keyframes fade-in-up {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fade-in-up {
+  animation: fade-in-up 0.3s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+/* Modal backdrop + panel */
+@keyframes overlay-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes panel-in {
+  from {
+    opacity: 0;
+    transform: translateY(12px) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.animate-overlay-in {
+  animation: overlay-in 0.2s ease-out both;
+}
+
+.animate-panel-in {
+  animation: panel-in 0.25s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+/* Slim scrollbar for the modal */
+.thin-scroll::-webkit-scrollbar {
+  width: 8px;
+}
+.thin-scroll::-webkit-scrollbar-thumb {
+  @apply rounded-full bg-slate-300;
+}
+.dark .thin-scroll::-webkit-scrollbar-thumb {
+  @apply bg-slate-700;
 }
