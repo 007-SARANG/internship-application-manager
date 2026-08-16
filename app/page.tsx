@@ -17,6 +17,7 @@ import AnalyticsDashboard from "@/components/AnalyticsDashboard";
 import ApplicationTableView from "@/components/ApplicationTableView";
 
 const STORAGE_KEY = "internship-applications-v1";
+const BACKUP_KEY = "internship-applications-v1-backup";
 
 type SortKey = "recent" | "company" | "dateApplied" | "priority";
 type ViewMode = "grid" | "kanban" | "analytics" | "table";
@@ -35,6 +36,7 @@ export default function Home() {
   const [cmdOpen, setCmdOpen] = useState(false);
   const [soundActive, setSoundActive] = useState(true);
   const [showParticles, setShowParticles] = useState(false);
+  const [hasBackup, setHasBackup] = useState(false);
 
   const fileRef = useRef<HTMLInputElement>(null);
 
@@ -47,6 +49,8 @@ export default function Home() {
       } else {
         setApps(DEMO_APPLICATIONS);
       }
+      const bkp = localStorage.getItem(BACKUP_KEY);
+      if (bkp) setHasBackup(true);
     } catch {
       setApps(DEMO_APPLICATIONS);
     }
@@ -66,7 +70,7 @@ export default function Home() {
 
   function flash(msg: string) {
     setToast(msg);
-    window.setTimeout(() => setToast(""), 2800);
+    window.setTimeout(() => setToast(""), 3500);
   }
 
   const visible = useMemo(() => {
@@ -141,9 +145,35 @@ export default function Home() {
   }
 
   function handleInjectDemo() {
+    // Automatically save a backup of current user data before injecting demo!
+    if (apps.length > 0) {
+      try {
+        localStorage.setItem(BACKUP_KEY, JSON.stringify(apps));
+        setHasBackup(true);
+      } catch {
+        // ignore
+      }
+    }
+
     playSound("success");
     setApps(DEMO_APPLICATIONS);
-    flash("⚡ Injected Sample Data (6 Applications)!");
+    flash("⚡ Demo data loaded! Previous data saved to Backup (click Restore to revert).");
+  }
+
+  function handleRestoreBackup() {
+    try {
+      const bkp = localStorage.getItem(BACKUP_KEY);
+      if (bkp) {
+        const restored = JSON.parse(bkp);
+        setApps(restored);
+        playSound("success");
+        flash("🎉 Successfully restored your previous applications!");
+      } else {
+        flash("No previous backup found.");
+      }
+    } catch {
+      flash("Error restoring backup data.");
+    }
   }
 
   function toggleSound() {
@@ -282,10 +312,21 @@ export default function Home() {
               {soundActive ? "🔊" : "🔇"}
             </button>
 
+            {/* Restore Backup Button if available */}
+            {hasBackup && (
+              <button
+                onClick={handleRestoreBackup}
+                className="inline-flex items-center gap-1 rounded-xl border border-amber-300 bg-amber-100 px-3 py-2 text-xs font-bold text-amber-900 hover:bg-amber-200 dark:border-amber-700/60 dark:bg-amber-950/80 dark:text-amber-300 transition animate-pulse"
+                title="Restore your data prior to Demo injection"
+              >
+                <span>↩️</span> Restore Backup
+              </button>
+            )}
+
             {/* Demo Injector */}
             <button
               onClick={handleInjectDemo}
-              className="hidden sm:inline-flex items-center gap-1 rounded-xl border border-purple-200 bg-purple-50 px-3 py-2 text-xs font-bold text-purple-700 hover:bg-purple-100 dark:border-purple-500/30 dark:bg-purple-500/20 dark:text-purple-300 transition"
+              className="hidden sm:inline-flex items-center gap-1 rounded-xl border border-purple-200 bg-purple-50 px-3 py-2 text-xs font-bold text-purple-700 hover:bg-purple-100 dark:border-purple-500/30 dark:bg-purple-950/60 dark:text-purple-300 transition"
             >
               <span>⚡</span> Demo
             </button>
@@ -383,6 +424,14 @@ export default function Home() {
           </div>
 
           <div className="flex gap-2">
+            {hasBackup && (
+              <button
+                onClick={handleRestoreBackup}
+                className="rounded-xl border border-amber-300 bg-amber-100 px-3 py-2 text-xs font-bold text-amber-900 hover:bg-amber-200 dark:border-amber-700/60 dark:bg-amber-950/80 dark:text-amber-300 transition"
+              >
+                ↩️ Undo Demo / Restore Backup
+              </button>
+            )}
             <button
               onClick={triggerConfetti}
               className="rounded-xl border border-emerald-200 bg-emerald-50 px-3 py-2 text-xs font-bold text-emerald-700 hover:bg-emerald-100 dark:border-emerald-500/30 dark:bg-emerald-950/60 dark:text-emerald-300 transition"

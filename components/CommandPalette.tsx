@@ -114,7 +114,7 @@ export default function CommandPalette({
                   className="flex w-full items-center justify-between rounded-xl px-3 py-2 text-sm font-semibold text-slate-800 dark:text-slate-200 transition hover:bg-purple-50 dark:hover:bg-purple-500/20"
                 >
                   <span className="flex items-center gap-2">
-                    <span>⚡</span> Inject Cyber Demo Data (6 Apps)
+                    <span>⚡</span> Inject Cyber Demo Data (Saves Auto-Backup)
                   </span>
                   <span className="text-xs text-purple-600 dark:text-purple-400 font-mono">DEMO</span>
                 </button>
