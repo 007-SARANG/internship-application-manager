@@ -11,7 +11,6 @@ interface Props {
   onSelectApp: (app: Application) => void;
   onAddApp: () => void;
   onSwitchView: (view: "grid" | "kanban" | "analytics" | "table") => void;
-  onInjectDemo: () => void;
   onToggleSound: () => void;
   soundEnabled: boolean;
 }
@@ -23,7 +22,6 @@ export default function CommandPalette({
   onSelectApp,
   onAddApp,
   onSwitchView,
-  onInjectDemo,
   onToggleSound,
   soundEnabled,
 }: Props) {
@@ -104,19 +102,6 @@ export default function CommandPalette({
                     <span>➕</span> Add New Application
                   </span>
                   <span className="text-xs text-slate-400">Shortcut</span>
-                </button>
-                <button
-                  onClick={() => {
-                    playSound("pop");
-                    onInjectDemo();
-                    onClose();
-                  }}
-                  className="flex w-full items-center justify-between rounded-xl px-3 py-2 text-sm font-semibold text-slate-800 dark:text-slate-200 transition hover:bg-purple-50 dark:hover:bg-purple-500/20"
-                >
-                  <span className="flex items-center gap-2">
-                    <span>⚡</span> Inject Cyber Demo Data (Saves Auto-Backup)
-                  </span>
-                  <span className="text-xs text-purple-600 dark:text-purple-400 font-mono">DEMO</span>
                 </button>
                 <button
                   onClick={() => {

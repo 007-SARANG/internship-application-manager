@@ -3,7 +3,6 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { Application, ApplicationStatus, STATUSES } from "@/lib/types";
 import { exportApplications, parseImport } from "@/lib/storage";
-import { DEMO_APPLICATIONS } from "@/lib/demoData";
 import { isSoundEnabled, setSoundEnabled, playSound } from "@/lib/soundFX";
 import { triggerConfetti } from "@/lib/confetti";
 import ApplicationCard from "@/components/ApplicationCard";
@@ -47,12 +46,12 @@ export default function Home() {
       if (raw) {
         setApps(JSON.parse(raw));
       } else {
-        setApps(DEMO_APPLICATIONS);
+        setApps([]);
       }
       const bkp = localStorage.getItem(BACKUP_KEY);
       if (bkp) setHasBackup(true);
     } catch {
-      setApps(DEMO_APPLICATIONS);
+      setApps([]);
     }
     setLoaded(true);
     setSoundActive(isSoundEnabled());
@@ -142,22 +141,6 @@ export default function Home() {
     setEditing(app);
     setFormDefaultStatus(undefined);
     setShowForm(true);
-  }
-
-  function handleInjectDemo() {
-    // Automatically save a backup of current user data before injecting demo!
-    if (apps.length > 0) {
-      try {
-        localStorage.setItem(BACKUP_KEY, JSON.stringify(apps));
-        setHasBackup(true);
-      } catch {
-        // ignore
-      }
-    }
-
-    playSound("success");
-    setApps(DEMO_APPLICATIONS);
-    flash("⚡ Demo data loaded! Previous data saved to Backup (click Restore to revert).");
   }
 
   function handleRestoreBackup() {
@@ -316,20 +299,12 @@ export default function Home() {
             {hasBackup && (
               <button
                 onClick={handleRestoreBackup}
-                className="inline-flex items-center gap-1 rounded-xl border border-amber-300 bg-amber-100 px-3 py-2 text-xs font-bold text-amber-900 hover:bg-amber-200 dark:border-amber-700/60 dark:bg-amber-950/80 dark:text-amber-300 transition animate-pulse"
+                className="inline-flex items-center gap-1 rounded-xl border border-amber-300 bg-amber-100 px-3 py-2 text-xs font-bold text-amber-900 hover:bg-amber-200 dark:border-amber-700/60 dark:bg-amber-950/80 dark:text-amber-300 transition"
                 title="Restore your data prior to Demo injection"
               >
                 <span>↩️</span> Restore Backup
               </button>
             )}
-
-            {/* Demo Injector */}
-            <button
-              onClick={handleInjectDemo}
-              className="hidden sm:inline-flex items-center gap-1 rounded-xl border border-purple-200 bg-purple-50 px-3 py-2 text-xs font-bold text-purple-700 hover:bg-purple-100 dark:border-purple-500/30 dark:bg-purple-950/60 dark:text-purple-300 transition"
-            >
-              <span>⚡</span> Demo
-            </button>
 
             {/* Import / Export */}
             <button
@@ -429,7 +404,7 @@ export default function Home() {
                 onClick={handleRestoreBackup}
                 className="rounded-xl border border-amber-300 bg-amber-100 px-3 py-2 text-xs font-bold text-amber-900 hover:bg-amber-200 dark:border-amber-700/60 dark:bg-amber-950/80 dark:text-amber-300 transition"
               >
-                ↩️ Undo Demo / Restore Backup
+                ↩️ Restore Backup
               </button>
             )}
             <button
@@ -530,7 +505,7 @@ export default function Home() {
                   </p>
                   <p className="mt-1 max-w-xs text-xs text-slate-500 dark:text-slate-400">
                     {apps.length === 0
-                      ? "Add your first internship application or click Demo to inject sample applications."
+                      ? "Add your first internship application to start tracking."
                       : "Try adjusting your search query or filter options."}
                   </p>
                   {apps.length === 0 && (
@@ -540,12 +515,6 @@ export default function Home() {
                         className="rounded-xl bg-gradient-to-r from-indigo-600 via-blue-600 to-cyan-600 px-4 py-2 text-xs font-bold text-white shadow-sm hover:scale-105 transition"
                       >
                         + Add Application
-                      </button>
-                      <button
-                        onClick={handleInjectDemo}
-                        className="rounded-xl border border-purple-200 bg-purple-50 px-4 py-2 text-xs font-bold text-purple-700 hover:bg-purple-100 dark:border-purple-500/30 dark:bg-purple-950/60 dark:text-purple-300 transition"
-                      >
-                        ⚡ Inject Demo Data
                       </button>
                     </div>
                   )}
@@ -583,7 +552,6 @@ export default function Home() {
         onSelectApp={(app) => openEdit(app)}
         onAddApp={() => openAdd()}
         onSwitchView={(vm) => setViewMode(vm)}
-        onInjectDemo={handleInjectDemo}
         onToggleSound={toggleSound}
         soundEnabled={soundActive}
       />
