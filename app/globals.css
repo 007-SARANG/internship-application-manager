@@ -11,41 +11,68 @@
 }
 
 body {
-  @apply bg-slate-50 text-slate-900 antialiased transition-colors duration-300;
+  @apply bg-slate-50 text-slate-900 antialiased transition-colors duration-200 overflow-x-hidden min-h-screen;
+  background-image: 
+    radial-gradient(ellipse 80% 80% at 50% -20%, rgba(99, 102, 241, 0.06), rgba(255, 255, 255, 0)),
+    radial-gradient(circle at 100% 50%, rgba(56, 189, 248, 0.04), transparent 50%),
+    radial-gradient(circle at 0% 100%, rgba(168, 85, 247, 0.04), transparent 50%);
+  background-attachment: fixed;
 }
 
 .dark body {
   @apply bg-slate-950 text-slate-100;
-  background-image:
-    radial-gradient(45rem 45rem at 100% 0%, rgba(99, 102, 241, 0.12), transparent),
-    radial-gradient(40rem 40rem at 0% 100%, rgba(16, 185, 129, 0.08), transparent);
-  background-attachment: fixed;
+  background-image: 
+    radial-gradient(ellipse 80% 80% at 50% -20%, rgba(99, 102, 241, 0.15), rgba(255, 255, 255, 0)),
+    radial-gradient(circle at 100% 50%, rgba(6, 182, 212, 0.08), transparent 50%),
+    radial-gradient(circle at 0% 100%, rgba(168, 85, 247, 0.08), transparent 50%);
 }
 
-body {
-  background-image:
-    radial-gradient(55rem 55rem at 100% -5%, rgba(99, 102, 241, 0.07), transparent),
-    radial-gradient(45rem 45rem at -5% 5%, rgba(16, 185, 129, 0.06), transparent);
-  background-attachment: fixed;
+/* Linear-style Grid Pattern */
+.bg-grid-pattern {
+  background-size: 32px 32px;
+  background-image: 
+    linear-gradient(to right, rgba(0, 0, 0, 0.03) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(0, 0, 0, 0.03) 1px, transparent 1px);
 }
 
-/* Card entrance */
+.dark .bg-grid-pattern {
+  background-image: 
+    linear-gradient(to right, rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+}
+
+/* Custom Styled Select Pill - Fixes ugly white browser select boxes */
+.custom-select-pill {
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%2364748b'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 0.5rem center;
+  background-size: 0.85em;
+  padding-right: 1.6rem !important;
+}
+
+.dark .custom-select-pill {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%2394a3b8'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E");
+}
+
+/* Card Entrance Animations */
 @keyframes fade-in-up {
   from {
     opacity: 0;
-    transform: translateY(8px);
+    transform: translateY(8px) scale(0.99);
   }
   to {
     opacity: 1;
-    transform: translateY(0);
+    transform: translateY(0) scale(1);
   }
 }
 
 .animate-fade-in-up {
-  animation: fade-in-up 0.3s cubic-bezier(0.16, 1, 0.3, 1) both;
+  animation: fade-in-up 0.25s cubic-bezier(0.16, 1, 0.3, 1) both;
 }
 
-/* Modal backdrop + panel */
 @keyframes overlay-in {
   from {
     opacity: 0;
@@ -58,11 +85,10 @@ body {
 @keyframes panel-in {
   from {
     opacity: 0;
-    transform: translateY(12px) scale(0.98);
+    transform: translateY(10px) scale(0.97);
   }
   to {
     opacity: 1;
-    transform: translateY(0) scale(1);
   }
 }
 
@@ -74,13 +100,17 @@ body {
   animation: panel-in 0.25s cubic-bezier(0.16, 1, 0.3, 1) both;
 }
 
-/* Slim scrollbar for the modal */
+/* Custom Scrollbar */
 .thin-scroll::-webkit-scrollbar {
-  width: 8px;
+  width: 6px;
+  height: 6px;
+}
+.thin-scroll::-webkit-scrollbar-track {
+  background: transparent;
 }
 .thin-scroll::-webkit-scrollbar-thumb {
-  @apply rounded-full bg-slate-300;
+  @apply rounded-full bg-slate-300 hover:bg-slate-400;
 }
 .dark .thin-scroll::-webkit-scrollbar-thumb {
-  @apply bg-slate-700;
+  @apply bg-slate-800 hover:bg-slate-700;
 }
