@@ -36,8 +36,10 @@ export default function Home() {
   const [soundActive, setSoundActive] = useState(true);
   const [showParticles, setShowParticles] = useState(false);
   const [hasBackup, setHasBackup] = useState(false);
+  const [showMenu, setShowMenu] = useState(false);
 
   const fileRef = useRef<HTMLInputElement>(null);
+  const menuRef = useRef<HTMLDivElement>(null);
 
   // Load once on mount.
   useEffect(() => {
@@ -66,6 +68,17 @@ export default function Home() {
       // ignore quota errors
     }
   }, [apps, loaded]);
+
+  // Click outside to close menu
+  useEffect(() => {
+    const handleClickOutside = (e: MouseEvent) => {
+      if (menuRef.current && !menuRef.current.contains(e.target as Node)) {
+        setShowMenu(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
 
   function flash(msg: string) {
     setToast(msg);
@@ -197,133 +210,161 @@ export default function Home() {
       {/* Optional Canvas Particles */}
       {showParticles && <ParticleBackground />}
 
-      {/* Top Header Navigation */}
-      <header className="sticky top-0 z-30 border-b border-slate-200/80 bg-white/80 dark:border-slate-800/80 dark:bg-slate-950/80 backdrop-blur-xl">
-        <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-3 sm:px-6 lg:px-8">
-          {/* Logo & Branding */}
-          <div className="flex items-center gap-3">
-            <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-indigo-600 via-blue-600 to-cyan-500 font-black text-white shadow-sm">
+      {/* Modern, Spacious Linear-Grade Navbar */}
+      <header className="sticky top-0 z-30 border-b border-slate-200/80 bg-white/90 dark:border-slate-800/80 dark:bg-slate-950/90 backdrop-blur-xl transition-all">
+        <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-6 lg:px-8 gap-4">
+          
+          {/* Left: Branding */}
+          <div className="flex items-center gap-3 shrink-0">
+            <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-tr from-indigo-600 via-blue-600 to-cyan-400 text-white font-black shadow-md shadow-blue-500/10">
               ⚡
             </div>
-            <div>
-              <span className="text-base font-extrabold tracking-tight text-slate-900 dark:text-white flex items-center gap-2">
+            <div className="flex items-center gap-2">
+              <span className="text-base font-extrabold tracking-tight text-slate-900 dark:text-white">
                 Application Manager
-                <span className="rounded-full bg-blue-50 text-blue-700 dark:bg-cyan-500/20 dark:text-cyan-300 px-2 py-0.5 text-[10px] font-mono font-bold border border-blue-200 dark:border-cyan-500/30">
-                  PRO
-                </span>
+              </span>
+              <span className="rounded-full bg-blue-50 dark:bg-cyan-500/15 text-blue-700 dark:text-cyan-300 px-2 py-0.5 text-[10px] font-mono font-bold border border-blue-200 dark:border-cyan-500/30">
+                PRO
               </span>
             </div>
           </div>
 
-          {/* View Mode Switcher */}
-          <div className="hidden md:flex items-center rounded-xl border border-slate-200 bg-slate-100/80 dark:border-slate-800 dark:bg-slate-900 p-1">
+          {/* Center: Spacious Floating Segmented Switcher */}
+          <nav className="hidden md:flex items-center rounded-full border border-slate-200 dark:border-slate-800 bg-slate-100/90 dark:bg-slate-900/90 p-1 shadow-inner gap-1">
             <button
               onClick={() => {
                 playSound("switch");
                 setViewMode("grid");
               }}
-              className={`rounded-lg px-3 py-1.5 text-xs font-bold transition ${
+              className={`flex items-center gap-1.5 rounded-full px-4 py-1.5 text-xs font-bold transition-all duration-200 ${
                 viewMode === "grid"
                   ? "bg-white text-blue-600 shadow-sm dark:bg-cyan-500 dark:text-white"
                   : "text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white"
               }`}
             >
-              📊 Grid
+              <span>📊</span>
+              <span>Grid</span>
             </button>
             <button
               onClick={() => {
                 playSound("switch");
                 setViewMode("kanban");
               }}
-              className={`rounded-lg px-3 py-1.5 text-xs font-bold transition ${
+              className={`flex items-center gap-1.5 rounded-full px-4 py-1.5 text-xs font-bold transition-all duration-200 ${
                 viewMode === "kanban"
                   ? "bg-white text-purple-600 shadow-sm dark:bg-purple-600 dark:text-white"
                   : "text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white"
               }`}
             >
-              📋 Kanban
+              <span>📋</span>
+              <span>Kanban</span>
             </button>
             <button
               onClick={() => {
                 playSound("switch");
                 setViewMode("analytics");
               }}
-              className={`rounded-lg px-3 py-1.5 text-xs font-bold transition ${
+              className={`flex items-center gap-1.5 rounded-full px-4 py-1.5 text-xs font-bold transition-all duration-200 ${
                 viewMode === "analytics"
                   ? "bg-white text-emerald-600 shadow-sm dark:bg-emerald-600 dark:text-white"
                   : "text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white"
               }`}
             >
-              📈 Analytics
+              <span>📈</span>
+              <span>Analytics</span>
             </button>
             <button
               onClick={() => {
                 playSound("switch");
                 setViewMode("table");
               }}
-              className={`rounded-lg px-3 py-1.5 text-xs font-bold transition ${
+              className={`flex items-center gap-1.5 rounded-full px-4 py-1.5 text-xs font-bold transition-all duration-200 ${
                 viewMode === "table"
                   ? "bg-white text-amber-600 shadow-sm dark:bg-amber-600 dark:text-white"
                   : "text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white"
               }`}
             >
-              📑 Sheet
+              <span>📑</span>
+              <span>Sheet</span>
             </button>
-          </div>
+          </nav>
 
-          {/* Action Bar */}
-          <div className="flex items-center gap-2">
-            {/* Command Palette Launcher */}
+          {/* Right: Clean, Uncluttered Action Bar */}
+          <div className="flex items-center gap-3 shrink-0">
+            {/* Search Trigger */}
             <button
               onClick={() => {
                 playSound("pop");
                 setCmdOpen(true);
               }}
-              className="flex items-center gap-1.5 rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-xs font-semibold text-slate-700 transition hover:bg-slate-100 dark:border-cyan-500/30 dark:bg-slate-900 dark:text-cyan-300 dark:hover:bg-cyan-500/20"
-              title="Open Command Palette"
+              className="flex items-center gap-2 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-900/80 px-3.5 py-1.5 text-xs font-semibold text-slate-700 dark:text-slate-300 transition hover:border-slate-300 dark:hover:border-slate-700"
+              title="Open Command Search (Cmd + K)"
             >
-              <span>🔍</span>
-              <span className="hidden lg:inline">Cmd + K</span>
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="text-slate-400">
+                <circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/>
+              </svg>
+              <span className="hidden lg:inline text-slate-500 font-mono text-[11px]">⌘K</span>
             </button>
 
-            {/* Sound Toggle */}
-            <button
-              onClick={toggleSound}
-              className="rounded-xl border border-slate-200 bg-slate-50 px-2.5 py-2 text-xs text-slate-700 hover:bg-slate-100 dark:border-slate-800 dark:bg-slate-900 dark:text-slate-300 transition"
-              title="Toggle Audio SFX"
-            >
-              {soundActive ? "🔊" : "🔇"}
-            </button>
-
-            {/* Restore Backup Button if available */}
-            {hasBackup && (
+            {/* More Actions Menu Dropdown */}
+            <div ref={menuRef} className="relative">
               <button
-                onClick={handleRestoreBackup}
-                className="inline-flex items-center gap-1 rounded-xl border border-amber-300 bg-amber-100 px-3 py-2 text-xs font-bold text-amber-900 hover:bg-amber-200 dark:border-amber-700/60 dark:bg-amber-950/80 dark:text-amber-300 transition"
-                title="Restore your data prior to Demo injection"
+                onClick={() => setShowMenu(!showMenu)}
+                className="flex items-center gap-1.5 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-900/80 px-3 py-1.5 text-xs font-semibold text-slate-700 dark:text-slate-300 transition hover:bg-slate-100 dark:hover:bg-slate-800"
               >
-                <span>↩️</span> Restore Backup
+                <span>Tools</span>
+                <svg className={`h-3 w-3 opacity-60 transition-transform ${showMenu ? "rotate-180" : ""}`} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
+                </svg>
               </button>
-            )}
 
-            {/* Import / Export */}
-            <button
-              onClick={() => fileRef.current?.click()}
-              className="hidden xl:block rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-xs font-semibold text-slate-700 hover:bg-slate-100 dark:border-slate-800 dark:bg-slate-900 dark:text-slate-300 transition"
-            >
-              Import
-            </button>
-            <button
-              onClick={() => {
-                if (apps.length === 0) return flash("Nothing to export yet.");
-                exportApplications(apps);
-                playSound("success");
-                flash("Exported applications JSON!");
-              }}
-              className="hidden xl:block rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-xs font-semibold text-slate-700 hover:bg-slate-100 dark:border-slate-800 dark:bg-slate-900 dark:text-slate-300 transition"
-            >
-              Export
-            </button>
+              {showMenu && (
+                <div className="animate-fade-in-up absolute right-0 z-50 mt-2 w-48 rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-2 shadow-xl">
+                  <button
+                    onClick={() => {
+                      fileRef.current?.click();
+                      setShowMenu(false);
+                    }}
+                    className="flex w-full items-center gap-2 rounded-xl px-3 py-2 text-xs font-semibold text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition"
+                  >
+                    <span>📥</span> Import Data
+                  </button>
+                  <button
+                    onClick={() => {
+                      if (apps.length === 0) return flash("Nothing to export yet.");
+                      exportApplications(apps);
+                      playSound("success");
+                      flash("Exported applications JSON!");
+                      setShowMenu(false);
+                    }}
+                    className="flex w-full items-center gap-2 rounded-xl px-3 py-2 text-xs font-semibold text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition"
+                  >
+                    <span>📤</span> Export Data
+                  </button>
+                  <button
+                    onClick={() => {
+                      toggleSound();
+                      setShowMenu(false);
+                    }}
+                    className="flex w-full items-center gap-2 rounded-xl px-3 py-2 text-xs font-semibold text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition"
+                  >
+                    <span>{soundActive ? "🔊" : "🔇"}</span> Sound FX ({soundActive ? "ON" : "OFF"})
+                  </button>
+                  {hasBackup && (
+                    <button
+                      onClick={() => {
+                        handleRestoreBackup();
+                        setShowMenu(false);
+                      }}
+                      className="flex w-full items-center gap-2 rounded-xl px-3 py-2 text-xs font-bold text-amber-700 dark:text-amber-300 hover:bg-amber-50 dark:hover:bg-amber-950/60 transition border-t border-slate-100 dark:border-slate-800 mt-1 pt-2"
+                    >
+                      <span>↩️</span> Restore Backup
+                    </button>
+                  )}
+                </div>
+              )}
+            </div>
+
             <input
               ref={fileRef}
               type="file"
@@ -334,10 +375,10 @@ export default function Home() {
 
             <ThemeToggle />
 
-            {/* Deploy Application Button */}
+            {/* Add Application Button */}
             <button
               onClick={() => openAdd()}
-              className="inline-flex items-center gap-1.5 rounded-xl bg-gradient-to-r from-indigo-600 via-blue-600 to-cyan-600 px-4 py-2 text-xs font-bold text-white shadow-sm transition hover:scale-105"
+              className="inline-flex items-center gap-1.5 rounded-xl bg-gradient-to-r from-indigo-600 via-blue-600 to-cyan-500 px-4 py-2 text-xs font-bold text-white shadow-sm shadow-blue-500/20 transition hover:scale-105 active:scale-95"
             >
               <span className="text-base leading-none">+</span>
               <span>Add Application</span>
@@ -399,14 +440,6 @@ export default function Home() {
           </div>
 
           <div className="flex gap-2">
-            {hasBackup && (
-              <button
-                onClick={handleRestoreBackup}
-                className="rounded-xl border border-amber-300 bg-amber-100 px-3 py-2 text-xs font-bold text-amber-900 hover:bg-amber-200 dark:border-amber-700/60 dark:bg-amber-950/80 dark:text-amber-300 transition"
-              >
-                ↩️ Restore Backup
-              </button>
-            )}
             <button
               onClick={triggerConfetti}
               className="rounded-xl border border-emerald-200 bg-emerald-50 px-3 py-2 text-xs font-bold text-emerald-700 hover:bg-emerald-100 dark:border-emerald-500/30 dark:bg-emerald-950/60 dark:text-emerald-300 transition"
